@@ -201,7 +201,7 @@ Features are ingested from three sources via Google Earth Engine:
 
 **Temporal coverage:** 336 hourly timesteps per city-season pair  
 **Spatial coverage:** ~3,000–3,100 nodes per city at ~500m resolution  
-**Train / Val / Test split:** 240 / 48 / 48 hours (chronological, no shuffle)
+**Train / Val / Test split:** 228 / 36 / 36 hours (chronological, no shuffle)
 
 > The GEE data collection scripts are included in this repository under `src/nodes` and `src/csv`.
 
