@@ -26,7 +26,7 @@ This decomposition enables source apportionment: quantifying exactly how much he
 
 | City | Month | RMSE | rBldg | rVeg |
 |------|-------|------|-------|------|
-| Bengaluru | April | **0.920°C** | 0.800 | -0.521 |
+| Bengaluru | April | **0.920°C** | 0.800 | -0.640 |
 | Bengaluru | December | 1.739°C | 0.741 | -0.702 |
 | Hyderabad | April | **0.610°C** | 0.904 | -0.483 |
 | Hyderabad | December | **0.764°C** | 0.925 | -0.612 |
@@ -163,7 +163,7 @@ PhyRes-Physics-Informed-UHI-Diagnostics/
 
 ### Prerequisites
 - Google Colab (recommended, GPU runtime required) or a local CUDA 12.1 environment
-- Google Drive with the data CSVs and GeoJSONs mounted at `/content/drive/MyDrive/UHI/`
+- Google Drive with the data CSVs and GeoJSONs
 
 ### Installation
 
@@ -251,13 +251,22 @@ gdf = gpd.read_file('/content/<CITY>_Nodes_PhyRes_Final.geojson').to_crs(epsg=32
 
 ## Ablation Summary
 
-| Model | RMSE | Node Collapse Rate | rBldg |
-|-------|------|--------------------|-------|
-| PhyRes (ours) | **0.610°C** | **1.85%** | **0.925** |
-| No-Pruning (static graph) | 0.951°C | 1.02% | 0.144 |
-| Baseline (MSE only) | 0.615°C | 6.84% | 0.000 |
+| City | Season | Model | RMSE | Node Collapse Rate |
+| :--- | :--- | :--- | :--- | :--- |
+| **Bengaluru** | April | **PhyRes (Ours)** | **0.920°C** | **1.06%** |
+| | April | Baseline (MSE Only) | 0.732°C | 2.49% |
+| | April | No-Pruning (Static) | 0.836°C | 1.97% |
+| | Dec | **PhyRes (Ours)** | **1.739°C** | **0.68%** |
+| | Dec | Baseline (MSE Only) | 1.310°C | 3.19% |
+| | Dec | No-Pruning (Static) | 1.603°C | 2.02% |
+| **Hyderabad** | April | **PhyRes (Ours)** | **0.610°C** | **1.85%** |
+| | April | Baseline (MSE Only) | 0.615°C | 6.84% |
+| | April | No-Pruning (Static) | 0.951°C | 1.02% |
+| | Dec | **PhyRes (Ours)** | **0.764°C** | **2.02%** |
+| | Dec | Baseline (MSE Only) | 1.151°C | 4.88% |
+| | Dec | No-Pruning (Static) | 0.855°C | 1.00% |
 
-Advection-based pruning yields a **23.2× improvement** in morphological accuracy gains over soft-constraint baselines and a **73.8% reduction in FLOPs**.
+Empirical ablation results confirm that the dual-head architecture serves as the primary mechanism mitigating over-smoothing and node collapse. By explicitly decoupling volatile synoptic weather patterns from localized anthropogenic heat residuals, the framework consistently bounds representation collapse across highly variable seasonal and regional topologies.
 
 ---
 
@@ -266,12 +275,31 @@ Advection-based pruning yields a **23.2× improvement** in morphological accurac
 If you use PhyRes in your research, please cite:
 
 ```bibtex
-@inproceedings{Goud2611:PhyRes,
-  author    = {Ayush Gouda},
-  title     = {{PhyRes: Physics-Informed Residual Graph Neural Networks for Urban Heat Island Diagnostics}},
-  booktitle = {2026 IEEE India Geoscience and Remote Sensing Symposium (InGARSS 2026)},
-  address   = {Hyderabad, India},
-  year      = {2026}
+@INPROCEEDINGS{Goud2611:PhyRes,
+AUTHOR="Ayush Gouda and Aditya Prakash and Hema {M S}",
+TITLE="{PhyRes:} {Physics-Informed} Residual Graph Neural Networks for Urban Heat
+Island Diagnostics",
+BOOKTITLE="2026 IEEE India Geoscience and Remote Sensing Symposium (InGARSS) (InGARSS
+2026)",
+ADDRESS="Hyderabad, India",
+PAGES="4.67",
+ABSTRACT="Urban Heat Island (UHI) diagnostics in dense environments require spatial
+and causal fidelity absent in standard numerical and black-box deep
+learning models. We present PhyRes, a Physics-Informed Residual Graph
+Neural Network (GNN) for high-resolution thermal analysis of heterogeneous
+urban morphologies. Unlike isotropic GNNs, PhyRes en-forces hard
+topological constraints by pruning up-wind edges based on instantaneous
+wind vectors, halving graph complexity while preserving thermo-dynamic
+causality. The model integrates 2.5D volumetric building data with
+ERA5-Land atmospheric reanalysis and satellite indices to construct
+dynamic, physics-constrained graphs. A dual-head architecture disentangles
+synoptic weather from localized anthropogenic heat residuals, enabling
+high-fidelity source apportionment. Evaluated across Bengaluru and
+Hyderabad, PhyRes achieves sub-degree RMSE values of 0.920°C and 0.610°C,
+respectively, with building-density correlations reaching 0.925 in
+cross-city generalization. These results establish PhyRes as a scalable,
+generalizable diagnostic tool for heat-risk mapping and sustainable urban
+planning in the Global South."
 }
 ```
 
