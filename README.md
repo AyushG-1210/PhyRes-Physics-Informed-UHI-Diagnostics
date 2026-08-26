@@ -73,6 +73,7 @@ Input: [Nodes × Time Window × Features]
 PhyRes-Physics-Informed-UHI-Diagnostics/
 │
 ├── README.md
+├── LICENSE
 ├── requirements.txt
 │
 ├── data/
@@ -80,9 +81,7 @@ PhyRes-Physics-Informed-UHI-Diagnostics/
 │   └── Hyd_Nodes_Final.geojson
 │
 ├── paper/
-│   ├── AI_content_report.pdf
-│   ├── PhyRes.pdf
-│   └── plagiarism_report.pdf
+│   └── PhyRes.pdf
 │
 ├── results/
 │   ├── Bangalore/
@@ -90,44 +89,44 @@ PhyRes-Physics-Informed-UHI-Diagnostics/
 │   │   │   ├── phyres-model.pt
 │   │   │   ├── vanilla_baseline_model.pt
 │   │   │   └── zero_guidance_np_model.pt
-│   │   ├── Adjaceny_Check.png
-│   │   ├── April_Baseline_Model_City.png
-│   │   ├── April_Baseline_Model_Corr.png
-│   │   ├── April_Baseline_Model_Cosine.png
-│   │   ├── April_Baseline_Model_Scatter+Hist.png
+│   │   ├── Adjacency_Check.png
+│   │   ├── April_Baseline_City.png
+│   │   ├── April_Baseline_Collapse.png
+│   │   ├── April_Baseline_Corr.png
+│   │   ├── April_Baseline_Scatter+Hist.png
 │   │   ├── April_NoPruning_City.png
+│   │   ├── April_NoPruning_Collapse.png
 │   │   ├── April_NoPruning_Corr.png
-│   │   ├── April_NoPruning_Cosine.png
 │   │   ├── April_NoPruning_Scatter+Hist.png
 │   │   ├── April_PhyRes_City.png
+│   │   ├── April_PhyRes_Collapse.png
 │   │   ├── April_PhyRes_Corr.png
-│   │   ├── April_PhyRes_Cosine.png
 │   │   ├── April_PhyRes_Scatter+Hist.png
 │   │   ├── April_Results.txt
 │   │   ├── December_Baseline_City.png
-│   │   ├── December_Baseline_Cosine.png
-│   │   ├── December_Baseline_Model_Corr.png
-│   │   ├── December_Baseline_Model_Scatter+Hist.png
+│   │   ├── December_Baseline_Collapse.png
+│   │   ├── December_Baseline_Corr.png
+│   │   ├── December_Baseline_Scatter+Hist.png
 │   │   ├── December_NoPruning_City.png
+│   │   ├── December_NoPruning_Collapse.png
 │   │   ├── December_NoPruning_Corr.png
-│   │   ├── December_NoPruning_Cosine.png
 │   │   ├── December_NoPruning_Scatter+Hist.png
 │   │   ├── December_PhyRes_City.png
-│   │   ├── December_PhyRes_Cosine.png
+│   │   ├── December_PhyRes_Collapse.png
+│   │   ├── December_PhyRes_Corr.png
 │   │   ├── December_PhyRes_Scatter+Hist.png
-│   │   ├── December_Results.txt
-│   │   └── Decemeber_PhyRes_Corr.png
+│   │   └── December_Results.txt
 │   │
 │   └── Hyderabad/
-│       ├── April Models/
+│       ├── April_Models/
 │       │   ├── phyres-model.pt
 │       │   ├── vanilla_baseline_model.pt
 │       │   └── zero_guidance_np_model.pt
 │       ├── Adjacency_Check.png
 │       ├── April_Baseline_City.png
+│       ├── April_Baseline_Collapse.png
 │       ├── April_Baseline_Corr.png
 │       ├── April_Baseline_Scatter+Hist.png
-│       ├── April_Bsseline_Collapse.png
 │       ├── April_NoPruning_City.png
 │       ├── April_NoPruning_Collapse.png
 │       ├── April_NoPruning_Corr.png
@@ -138,9 +137,9 @@ PhyRes-Physics-Informed-UHI-Diagnostics/
 │       ├── April_PhyRes_Scatter+Hist.png
 │       ├── April_Results.txt
 │       ├── December_Baseline_City.png
+│       ├── December_Baseline_Collapse.png
 │       ├── December_Baseline_Corr.png
 │       ├── December_Baseline_Scatter+Hist.png
-│       ├── December_Bsseline_Collapse.png
 │       ├── December_NoPruning_City.png
 │       ├── December_NoPruning_Collapse.png
 │       ├── December_NoPruning_Corr.png
@@ -203,7 +202,7 @@ Features are ingested from three sources via Google Earth Engine:
 **Spatial coverage:** ~3,000–3,100 nodes per city at ~500m resolution  
 **Train / Val / Test split:** 228 / 36 / 36 hours (chronological, no shuffle)
 
-> The GEE data collection scripts are included in this repository under `src/nodes` and `src/csv`.
+> The GEE data collection scripts are included in this repository under `src/nodes.js` and `src/csv.js`.
 
 ---
 
@@ -212,7 +211,7 @@ Features are ingested from three sources via Google Earth Engine:
 Open `main.ipynb` in Google Colab with a GPU runtime and run all cells sequentially. The notebook is self-contained and covers:
 
 1. Dependency installation and environment verification
-2. Data loading and Z-score normalisation (train-statistics only)
+2. Data loading and Z-score normalisation
 3. Causal graph construction with advection-based pruning
 4. PhyRes model definition (SA-GAT + LSTM + dual head)
 5. Constrained training with composite loss (MSE + advection penalty + push-pull)
@@ -224,16 +223,16 @@ To switch between city-season pairs, update the data paths at the top of the **L
 
 ```python
 df  = pd.read_csv('/content/drive/MyDrive/UHI/<CITY_SEASON>.csv')
-gdf = gpd.read_file('/content/<CITY>_Nodes_PhyRes_Final.geojson').to_crs(epsg=32643)
+gdf = gpd.read_file('data/<CITY>_Nodes_Final.geojson').to_crs(epsg=32643)
 ```
 
 ---
 
 ## Sample Outputs
 
-**Causal Advection Pruning — Figure 1**
+**Adjacency Matrix Sparsity — Figure 2**
 
-![Causal Pruning Diagram](./results/Bangalore/Adjaceny_Check.png)
+![Adjacency Sparsity](./results/Bangalore/Adjacency_Check.png)
 
 **Residual Heat Map — Bengaluru April**
 
@@ -266,13 +265,14 @@ gdf = gpd.read_file('/content/<CITY>_Nodes_PhyRes_Final.geojson').to_crs(epsg=32
 | | Dec | Baseline (MSE Only) | 1.151°C | 4.88% |
 | | Dec | No-Pruning (Static) | 0.855°C | 1.00% |
 
-Empirical ablation results confirm that the dual-head architecture serves as the primary mechanism mitigating over-smoothing and node collapse. By explicitly decoupling volatile synoptic weather patterns from localized anthropogenic heat residuals, the framework consistently bounds representation collapse across highly variable seasonal and regional topologies.
+Empirical ablation results confirm that the dual-head architecture serves as the primary mechanism mitigating over-smoothing and node collapse. By explicitly decoupling volatile synoptic weather patterns from localized anthropogenic heat residuals, the framework substantially reduces representation collapse relative to the single-head baseline across all four city-season pairs.
 
 ---
 
 ## Citation
 
-If you use PhyRes in your research, please cite:
+The BibTeX entry below is the one generated by EDAS for this submission. The paper is
+currently under review; the entry will be finalised (pages, DOI) upon acceptance.
 
 ```bibtex
 @INPROCEEDINGS{Goud2611:PhyRes,
@@ -287,19 +287,19 @@ ABSTRACT="Urban Heat Island (UHI) diagnostics in dense environments require spat
 and causal fidelity absent in standard numerical and black-box deep
 learning models. We present PhyRes, a Physics-Informed Residual Graph
 Neural Network (GNN) for high-resolution thermal analysis of heterogeneous
-urban morphologies. Unlike isotropic GNNs, PhyRes en-forces hard
-topological constraints by pruning up-wind edges based on instantaneous
-wind vectors, halving graph complexity while preserving thermo-dynamic
-causality. The model integrates 2.5D volumetric building data with
-ERA5-Land atmospheric reanalysis and satellite indices to construct
-dynamic, physics-constrained graphs. A dual-head architecture disentangles
-synoptic weather from localized anthropogenic heat residuals, enabling
-high-fidelity source apportionment. Evaluated across Bengaluru and
-Hyderabad, PhyRes achieves sub-degree RMSE values of 0.920°C and 0.610°C,
-respectively, with building-density correlations reaching 0.925 in
-cross-city generalization. These results establish PhyRes as a scalable,
-generalizable diagnostic tool for heat-risk mapping and sustainable urban
-planning in the Global South."
+urban morphologies. Unlike isotropic GNNs, PhyRes enforces hard topological
+constraints by pruning up-wind edges based on instantaneous wind vectors,
+halving graph complexity while preserving thermodynamic causality. The
+model integrates 2.5D volumetric building data with ERA5-Land atmospheric
+reanalysis and satellite indices to construct dynamic, physics-constrained
+graphs. A dual-head architecture disentangles synoptic weather from
+localized anthropogenic heat residuals, enabling high-fidelity source
+apportionment. Evaluated across Bengaluru and Hyderabad, PhyRes achieves
+sub-degree RMSE values of 0.920°C and 0.610°C, respectively, with
+building-density correlations reaching up to 0.925 across seasonal test
+conditions. These results establish PhyRes as a scalable, generalizable
+diagnostic tool for heat-risk mapping and sustainable urban planning in the
+Global South."
 }
 ```
 
